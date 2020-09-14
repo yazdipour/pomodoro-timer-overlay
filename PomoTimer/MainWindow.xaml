@@ -1,0 +1,59 @@
+﻿<Window
+    x:Class="PomoTimer.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PomoTimer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="126"
+    Height="42"
+    AllowsTransparency="True"
+    Background="#00FFFFFF"
+    Left="82"
+    Opacity="0.5"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    Top="32"
+    Topmost="True"
+    WindowStartupLocation="Manual"
+    WindowState="Normal"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="White" />
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="Width" Value="24" />
+                <Setter Property="Height" Value="24" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Border
+        Padding="12,8"
+        Background="Red"
+        CornerRadius="22">
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock
+                FontFamily="Arial"
+                FontSize="20"
+                Text="25:00" />
+
+            <!-- <TextBlock Style="{StaticResource Icon}" Text="&#xE768;" /> -->
+            <Button
+                Margin="2,0"
+                Click="StartStop_OnClick"
+                Content="&#xE769;" />
+            <Button Click="ButtonBase_OnClick" Content="&#xE712;" />
+        </StackPanel>
+    </Border>
+</Window>
