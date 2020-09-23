@@ -10,11 +10,12 @@
     Height="42"
     AllowsTransparency="True"
     Background="#00FFFFFF"
-    Left="82"
-    Opacity="0.5"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    Left="{Binding LocationLeft}"
+    Opacity="{Binding OpacityValue}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
-    Top="32"
+    Top="{Binding LocationTop}"
     Topmost="True"
     WindowStartupLocation="Manual"
     WindowState="Normal"
@@ -39,20 +40,20 @@
     </Window.Resources>
     <Border
         Padding="12,8"
-        Background="Red"
+        Background="{Binding BgColor}"
         CornerRadius="22">
 
         <StackPanel Orientation="Horizontal">
             <TextBlock
                 FontFamily="Arial"
                 FontSize="20"
-                Text="25:00" />
+                Text="{Binding TimerLabel}" />
 
             <!-- <TextBlock Style="{StaticResource Icon}" Text="&#xE768;" /> -->
             <Button
                 Margin="2,0"
                 Click="StartStop_OnClick"
-                Content="&#xE769;" />
+                Content="{Binding PausePlayIcon}" />
             <Button Click="ButtonBase_OnClick" Content="&#xE712;" />
         </StackPanel>
     </Border>
