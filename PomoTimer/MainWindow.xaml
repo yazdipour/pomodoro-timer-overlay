@@ -6,16 +6,16 @@
     xmlns:local="clr-namespace:PomoTimer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MainWindow"
-    Width="126"
+    Width="146"
     Height="42"
     AllowsTransparency="True"
     Background="#00FFFFFF"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
-    Left="{Binding LocationLeft}"
-    Opacity="{Binding OpacityValue}"
+    Left="{Binding Settings.LocationLeft}"
+    Opacity="{Binding Settings.OpacityValue}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
-    Top="{Binding LocationTop}"
+    Top="{Binding Settings.LocationTop}"
     Topmost="True"
     WindowStartupLocation="Manual"
     WindowState="Normal"
@@ -40,7 +40,7 @@
     </Window.Resources>
     <Border
         Padding="12,8"
-        Background="{Binding BgColor}"
+        Background="{Binding Settings.BgColor}"
         CornerRadius="22">
 
         <StackPanel Orientation="Horizontal">
@@ -49,12 +49,26 @@
                 FontSize="20"
                 Text="{Binding TimerLabel}" />
 
-            <!-- <TextBlock Style="{StaticResource Icon}" Text="&#xE768;" /> -->
             <Button
-                Margin="2,0"
+                Margin="2,0,0,0"
                 Click="StartStop_OnClick"
-                Content="{Binding PausePlayIcon}" />
-            <Button Click="ButtonBase_OnClick" Content="&#xE712;" />
+                Content="{Binding PausePlayIcon}"
+                ToolTip="Start/Pause" />
+            <Button
+                Click="Relax_OnClick"
+                Content=""
+                ToolTip="Rest" />
+            <Button Click="OpenMenu_OnClick" Content="&#xE712;">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Click="Reset_OnClick" Header="_Restart" />
+                        <!-- <MenuItem Click="OpenSetting_OnClick" Header="_Settings" /> -->
+                        <MenuItem Click="GoGithub_OnClick" Header="_Github / Report Issues" />
+                        <MenuItem Click="Update_OnClick" Header="{Binding Settings.Version}" />
+                        <MenuItem Click="Exit_OnClick" Header="_Exit" />
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
         </StackPanel>
     </Border>
 </Window>
