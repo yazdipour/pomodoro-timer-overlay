@@ -11,6 +11,12 @@ namespace PomoTimer
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private enum State
+        {
+            Play, Pause, Relax, Init, Finished,
+            Continue
+        }
+
         public Settings Settings { get; set; } = new Settings();
         private TimeSpan _time = TimeSpan.FromMinutes(25);
 
@@ -64,25 +70,39 @@ namespace PomoTimer
 
         private void StartStop_OnClick(object sender, RoutedEventArgs e)
         {
-            if (_counter == null || _time.Seconds == 0) //start
+            if (_counter == null || CountingIsDone) //start
             {
-                PausePlayIcon = "";
-                Settings.BgColor = App.RED;
-                OnPropertyChanged(nameof(Settings));
+                UpdateUiState(State.Play);
                 CreateCounter(Settings.PomoTimeMinutes).Start();
             }
             else if (!_counter.IsEnabled) //continue
             {
-                PausePlayIcon = "";
                 _counter.IsEnabled = true;
                 _counter.Start();
+                UpdateUiState(State.Continue);
             }
             else //pause
             {
-                PausePlayIcon = "";
+                UpdateUiState(State.Pause);
                 _counter.Stop();
                 _counter.IsEnabled = false;
             }
+        }
+
+        private void Reset_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_counter == null)
+                return;
+            _counter.Stop();
+            _counter = null;
+            UpdateUiState(State.Init);
+        }
+
+        private void Relax_OnClick(object sender, RoutedEventArgs e)
+        {
+            Reset_OnClick(null, null);
+            CreateCounter(Settings.RelaxTimeMinutes).Start();
+            UpdateUiState(State.Relax);
         }
 
         private DispatcherTimer CreateCounter(int min)
@@ -92,33 +112,51 @@ namespace PomoTimer
             {
                 _time = _time.Subtract(TimeSpan.FromSeconds(1));
                 TimerLabel = _time.ToString(@"mm\:ss");
-                if (_time.Seconds == 0)
-                    _counter?.Stop();
+                if (!CountingIsDone)
+                    return;
+                UpdateUiState(State.Finished);
+                _counter?.Stop();
+                SoundHandler.Beep();
             }, Application.Current.Dispatcher);
             return _counter;
         }
-        private void Reset_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (_counter == null)
-                return;
-            _counter.Stop();
-            _counter = null;
-            PausePlayIcon = "";
-            Settings.BgColor = App.ASPHALT;
-            OnPropertyChanged(nameof(Settings));
-            TimerLabel = Settings.PomoTimeMinutes + ":00";
-        }
-        private void Relax_OnClick(object sender, RoutedEventArgs e)
-        {
-            Reset_OnClick(null, null);
-            Settings.BgColor = App.GREEN;
-            PausePlayIcon = "";
-            OnPropertyChanged(nameof(Settings));
-            CreateCounter(Settings.RelaxTimeMinutes).Start();
-        }
+
+        private bool CountingIsDone => _time.Seconds == 0 && _time.Minutes == 0;
         #endregion
 
-        private void Exit_OnClick(object sender, RoutedEventArgs e) => System.Windows.Application.Current.Shutdown();
+        private void UpdateUiState(State st)
+        {
+            switch (st)
+            {
+                case State.Play:
+                    PausePlayIcon = "";
+                    Settings.BgColor = App.RED;
+                    break;
+                case State.Pause:
+                    PausePlayIcon = "";
+                    break;
+                case State.Relax:
+                    Settings.BgColor = App.GREEN;
+                    PausePlayIcon = "";
+                    break;
+                case State.Init:
+                    PausePlayIcon = "";
+                    Settings.BgColor = App.ASPHALT;
+                    TimerLabel = Settings.PomoTimeMinutes + ":00";
+                    break;
+                case State.Finished:
+                    Settings.BgColor = App.YELLOW;
+                    break;
+                case State.Continue:
+                    PausePlayIcon = "";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(st), st, null);
+            }
+            OnPropertyChanged(nameof(Settings));
+        }
+
+        private void Exit_OnClick(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
         private void GoGithub_OnClick(object sender, RoutedEventArgs e)
             => System.Diagnostics.Process.Start("https://github.com/yazdipour/pomodoro-timer-overlay");
 
@@ -127,6 +165,12 @@ namespace PomoTimer
         private void OpenSetting_OnClick(object sender, RoutedEventArgs e)
         {
             //TODO
+        }
+
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Window ui)
+                GetWindow(ui)?.DragMove();
         }
     }
 }

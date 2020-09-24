@@ -20,6 +20,7 @@
     WindowStartupLocation="Manual"
     WindowState="Normal"
     WindowStyle="None"
+    MouseLeftButtonDown="Window_MouseLeftButtonDown"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>

@@ -7,5 +7,6 @@ namespace PomoTimer
         public static string RED = "#e74c3c";
         public static string GREEN = "#27ae60";
         public static string ASPHALT = "#34495e";
+        public static string YELLOW = "#f39c12";
     }
 }
