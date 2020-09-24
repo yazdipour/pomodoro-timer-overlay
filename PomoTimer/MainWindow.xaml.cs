@@ -1,39 +1,43 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents.DocumentStructures;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Threading;
 
 namespace PomoTimer
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        #region Hide From Alt+Tab
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        private const int GWL_EX_STYLE = -20;
+        private const int WS_EX_APPWINDOW = 0x00040000, WS_EX_TOOLWINDOW = 0x00000080;
+        void FormLoaded(object sender, RoutedEventArgs args)
+        {
+            //Variable to hold the handle for the form
+            var helper = new WindowInteropHelper(this).Handle;
+            //Performing some magic to hide the form from Alt+Tab
+            SetWindowLong(helper, GWL_EX_STYLE, (GetWindowLong(helper, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
+        }
+        #endregion
+
         private enum State
         {
-            Play, Pause, Relax, Init, Finished,
-            Continue
+            Play, Pause, Relax, Init, Finished, Continue
         }
 
         public Settings Settings { get; set; } = new Settings();
         private TimeSpan _time = TimeSpan.FromMinutes(25);
-
-        #region INotifyPropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        #endregion INotifyPropertyChanged
-
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
-
+        public MainWindow() => InitializeComponent();
         private void OpenMenu_OnClick(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
@@ -44,6 +48,14 @@ namespace PomoTimer
             contextMenu.IsOpen = true;
             e.Handled = true;
         }
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        #endregion INotifyPropertyChanged
 
         #region Counter
         private DispatcherTimer _counter;
@@ -155,22 +167,21 @@ namespace PomoTimer
             }
             OnPropertyChanged(nameof(Settings));
         }
-
         private void Exit_OnClick(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
         private void GoGithub_OnClick(object sender, RoutedEventArgs e)
             => System.Diagnostics.Process.Start("https://github.com/yazdipour/pomodoro-timer-overlay");
 
         private void Update_OnClick(object sender, RoutedEventArgs e)
             => System.Diagnostics.Process.Start("https://github.com/yazdipour/pomodoro-timer-overlay/releases");
-        private void OpenSetting_OnClick(object sender, RoutedEventArgs e)
-        {
-            //TODO
-        }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is Window ui)
                 GetWindow(ui)?.DragMove();
+        }
+        private void OpenSetting_OnClick(object sender, RoutedEventArgs e)
+        {
+            //TODO
         }
     }
 }

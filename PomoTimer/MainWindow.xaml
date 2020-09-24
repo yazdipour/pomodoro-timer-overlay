@@ -12,6 +12,8 @@
     Background="#00FFFFFF"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
     Left="{Binding Settings.LocationLeft}"
+    Loaded="FormLoaded"
+    MouseLeftButtonDown="Window_MouseLeftButtonDown"
     Opacity="{Binding Settings.OpacityValue}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -20,7 +22,6 @@
     WindowStartupLocation="Manual"
     WindowState="Normal"
     WindowStyle="None"
-    MouseLeftButtonDown="Window_MouseLeftButtonDown"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
