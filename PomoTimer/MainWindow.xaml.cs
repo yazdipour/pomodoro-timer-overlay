@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents.DocumentStructures;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -128,7 +127,7 @@ namespace PomoTimer
                     return;
                 UpdateUiState(State.Finished);
                 _counter?.Stop();
-                SoundHandler.Beep();
+                SoundHandler.PlaySound(@"C:\Windows\Media\Windows Proximity Notification.wav");
             }, Application.Current.Dispatcher);
             return _counter;
         }
@@ -157,6 +156,7 @@ namespace PomoTimer
                     TimerLabel = Settings.PomoTimeMinutes + ":00";
                     break;
                 case State.Finished:
+                    PausePlayIcon = "";
                     Settings.BgColor = App.YELLOW;
                     break;
                 case State.Continue:
